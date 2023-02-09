@@ -1,22 +1,14 @@
 <template>
   <div id="app">
-    <!-- <img alt="Vue logo" src="./assets/logo.png"> -->
-    <Inicio/>
-    <hr>
-    <!-- <Teste/> -->
+    <h1>Lista de Itens</h1>
+    <router-view />
   </div>
 </template>
 
 <script>
-import Inicio from './components/Inicio.vue'
-import Teste from './components/Teste.vue'
 
 export default {
-  name: 'App',
-  components: {
-    Inicio: Inicio,
-    Teste
-  }
+
 }
 </script>
 
