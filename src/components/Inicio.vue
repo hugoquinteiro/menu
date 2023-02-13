@@ -16,12 +16,11 @@
           <div>
             <b-table hover striped :items="lista" :fields="fields" v-show="info.open"></b-table>                
           </div>
-
         </div>
-        <p>Produto</p>
+        <!-- <p>Produto</p>
         <div class="mt-2" v-for="produto in produtos" >
           <b-button block variant="dark" >{{produto}}</b-button>
-        </div>
+        </div> -->
     </b-container>
 
 
@@ -53,34 +52,23 @@ export default {
         //     {id:6, idgrup:3, descr:'Escova 110',preco1:5.09,preco2:29.99},
         //     {id:7, idgrup:3, descr:'Escova 120',preco1:10.6,preco2:50.99},
         // ],
-        lista:[],
-        temp:[]
+        lista:[]
 
     }
   },
   methods: {
     listar(grupoKey){
-        //console.log('Listar',Object.keys(this.grupos).filter( v => v === grupoKey)[0])
-        //console.log(this.grupos)
-        this.grupos = Object.entries(this.grupos).map((v) => {
-          if (Object.keys(v) !== grupoKey) {
-            v.open = false
-            return {v }
+        Object.entries(this.grupos).map((v) => {
+          if (v[0] === grupoKey) {
+            v[1].open = true
+          }else{
+            v[1].open = false
           }
+            return {v }
         })
-        console.log('grupo',this.grupos)
-        //this.grupos.open = Object.values(this.grupos.open).map(() => {return false})
-        //let idGrupo = Object.keys(this.grupos).filter( v => v === grupoKey)[0]
-        //this.grupo[grupoKey].open = true
+        let idGrupo = Object.keys(this.grupos).filter( v => v === grupoKey)[0]
         this.lista = Object.values(this.produtos).filter((v) => { return v.grupo === idGrupo})
-        //console.log('grupo',this.lista)
     },
-  //   created() {
-  //   this.$http.post('usuarios.json', {
-  //     nome: 'Maria',
-  //     email: 'maria_maria@gmail.com'
-  //   }).then(res => console.log(res))
-  //   }    
   },
   mounted(){
     //console.log('Inicio', this.grupo)
@@ -93,8 +81,6 @@ export default {
         this.produtos = resp.data
       })
     })
-    // console.log('grupo', this.grupos)
-    // console.log('produtos', this.produtos)
   },
 }
 </script>
