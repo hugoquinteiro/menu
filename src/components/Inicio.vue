@@ -33,12 +33,6 @@ export default {
         temp:'',
         grupos:[],
         produtos: [],
-        grupo:[
-            {id:1, grupo:'MQ PRO', color:'primary', open:false},
-            {id:2, grupo:'MQ Beauty', color:'warning', open:false},
-            {id:3, grupo:'MQ Escovas', color:'success', open:false},
-            {id:4, grupo:'Force Barber', color:'danger', open:false},
-        ],
         fields:[
             {key: 'produto', label: 'Produto', sortable: true, variant: 'secondary' },
             {key: 'valor1', label: 'Preço 01', sortable: true, variant: 'secondary' },
