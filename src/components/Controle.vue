@@ -40,7 +40,7 @@
                     </b-card-text>
                     <div class="row">
                         <b-button v-b-modal.modal-produto class="ml-4">Administrar</b-button>
-                        <b-button href="#" variant="primary" class="ml-3" @click="listar('produto')">Listar</b-button>
+                        <b-button href="#" variant="primary" class="ml-3" @click="listar('produto')">Listar + {{ temp }}</b-button>
                     </div>
                 </b-card>
                                 
@@ -62,7 +62,7 @@
             </b-modal>
             
        
-            <b-modal id="modal-produto" hide-footer title="Cadastrar Produto">
+            <b-modal id="modal-produto"  ref="modal-produto" hide-footer title="Cadastrar Produto">
                 <b-alert dismissible v-for="mensagem in mensagens" :key="mensagem.texto" v-model="mensagem.ativar" :variant="mensagem.tipo">
                     {{ mensagem.texto }}
                 </b-alert>
@@ -77,11 +77,15 @@
                 </b-form-group>
 
 
-                <b-button @click="salvarProduto" >Salvar</b-button>
+                <b-button @click="salvarProduto">{{ produto.id ? 'Salvar' : 'Incluir' }}</b-button>
+                <b-button v-if="produto.id" variant="danger" class="ml-2"  @click="excluirProduto(produto.id)">
+                    <i class="fa fa-trash"></i>  
+                </b-button>
             </b-modal>            
         </div>
 
-        <Listar v-show="tabela" :dados="dadosTable"/>
+        <!-- <Listar v-show="tabela" :dados="dadosTable"/> -->
+        <Inicio v-show="tabela" :dados="dadosTable" @editarProduto="editarProduto($event) "/>
     </b-container>
     
   </div>
@@ -89,10 +93,11 @@
 
 <script>
 import Listar from './ListarDados'
+import Inicio from './Inicio'
 import {Money} from 'v-money'
 
 export default {
-  components: {Money, Listar},  
+  components: {Money, Listar, Inicio},  
   data(){
     return {
         grupos:[],
@@ -123,7 +128,9 @@ export default {
           masked: false
         },
         tabela:false,
-        dadosTable: []
+        dadosTable: 'produtos'
+        ,temp:''
+        ,metodo:'POST'
     }
   },
   computed:{
@@ -148,16 +155,36 @@ export default {
             this.mensagens.push({texto:"ERRO: Preencher todos os campos!!", tipo: 'danger', tempo:2, ativar: true})
         }
     },
+    editarProduto(valor){
+        //console.log('Editar Controle:',valor)
+        this.produto = {...valor}
+        console.log('Editar Controle:',this.produto)
+        this.$refs['modal-produto'].show()
+        this.metodo = 'PUT'
+        //this.$bvModal.show('    ')
+        //this.produto = this.produtos[this.temp]
+        //console.log('Editar Controle', this.temp  )
+    },
     salvarProduto(){
         console.log('Salvar', this.validaDados('produto',this.produto))
+        const metodo = this.produto.id ? 'patch' : 'post'
+		const finalUrl = this.produto.id ? `/${this.produto.id}.json` : '.json'
         if (this.validaDados('produto',this.produto)){
-            this.$http.post('produtos.json',this.produto)
+            this.$http[metodo](`produtos${finalUrl}`,this.produto)
             .then(_ => this.mensagens.push({texto:"Ok: Produto Salvo!!", tipo: 'success', tempo:2, ativar: true}))
             .catch(err => console.log('Err', err))
             console.log(this.produto)
         } else {
             this.mensagens.push({texto:"ERRO: Preencher todos os campos!!", tipo: 'danger', tempo:2, ativar: true})
         }
+    },
+    excluirProduto(id){
+        this.$http.delete(`/produtos/${id}.json`)
+        .then( _ => {
+            this.mensagens = [{texto:"Produto foi apagado!!", tipo: 'success', tempo:2, ativar: true}]
+            console.log(' excluir produto', id)
+        })
+        .catch( err => this.mensagens = [{texto:err, tipo: 'danger', tempo:2, ativar: true}])
     },
     validaDados(tabela, objInfo){
         this.mensagens = []
@@ -173,19 +200,19 @@ export default {
         return result
     },
     listar(tab){
-        this.dadosTable = []
+        this.dadosTable = 'produtos'
         if (tab=='produto'){
-            this.$http.get('produtos.json').then(res =>{
-                Object.values(res.data).forEach((v) => this.dadosTable.push(v))
-            })
+            // this.$http.get('produtos.json').then(res =>{
+            //     Object.values(res.data).forEach((v) => this.dadosTable.push(v))
+            // })
             this.tabela=true
         }
 
         if (tab=='grupo'){
             this.tabela=true
-            this.$http.get('grupos.json').then(res =>{
-                Object.values(res.data).forEach((v) => this.dadosTable.push(v))
-            })
+            // this.$http.get('grupos.json').then(res =>{
+            //     Object.values(res.data).forEach((v) => this.dadosTable.push(v))
+            // })
         } 
     }    
   },

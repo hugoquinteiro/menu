@@ -1,0 +1,16 @@
+- Foto
+- Descrição detalhada
+- Busca
+- Loading
+- Ordenação
+- Auth
+- Hint nos botões
+
+--- Finalizados
+- Criar alertas
+- Criar validação
+- footer
+- Header
+
+Exemplos:
+https://app.cardapioweb.com/pizzaria
